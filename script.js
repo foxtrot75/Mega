@@ -1,8 +1,9 @@
 chrome.runtime.onMessage.addListener(({ name, data }) => {
-    if(name === 'megamarket') {
-        let table = document.getElementsByClassName("table")[0];
+    if(name === 'data') {
+        let tbody = document.getElementById("table").getElementsByTagName('tbody')[0];
+        tbody.innerHTML = "";
         data.value.forEach((elem) => {
-            let row = table.insertRow();
+            let row = tbody.insertRow();
             let c1 = row.insertCell();
             let c2 = row.insertCell();
             let c3 = row.insertCell();
@@ -12,6 +13,12 @@ chrome.runtime.onMessage.addListener(({ name, data }) => {
             c3.innerHTML = "<a href=\"" + elem.link + "\">link</a>";
         });
     }
-  });
+});
 
-chrome.runtime.sendMessage({ name: 'megamarket' });
+function update() {
+    chrome.runtime.sendMessage({ name: 'update' });
+}
+
+document.getElementById("button").addEventListener("click", update)
+
+chrome.runtime.sendMessage({ name: 'load' });

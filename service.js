@@ -44,8 +44,17 @@ async function getList(i) {
     return res[0].result;
 }
 
+let res = [];
+
+async function load() {
+    chrome.runtime.sendMessage({
+        name: 'data',
+        data: { value: res }
+    });
+}
+
 async function process() {
-    let res = [];
+    res = [];
 
     await Promise.all([getList(1), getList(2), getList(3), getList(4)]).then((lists) => {
         lists.forEach((list) => {
@@ -56,16 +65,14 @@ async function process() {
     });
 
     res.sort(function (a, b) { return a.total - b.total });
-    res = res.filter((item) => { return item.total < 60000; })
+    res = res.filter((item) => { return item.total < 50000; })
 
-    chrome.runtime.sendMessage({
-        name: 'megamarket',
-        data: { value: res }
-    });
-
+    load();
 }
 
 chrome.runtime.onMessage.addListener(({ name, data }) => {
-    if(name === 'megamarket')
+    if(name === 'update')
         process();
+    if(name == "load")
+        load()
 });
